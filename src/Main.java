@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import pathfinder.*;
 import maze.Maze;
 public class Main {
     public static void main(String[] args){
@@ -19,8 +19,10 @@ public class Main {
 
       Maze maze = new Maze(lines);
 
-      maze.showMaze();
-
+      pathfinderContext pathfinder = new pathfinderContext(new Dijkstra());
+      int dijkstraResult = pathfinder.execute(maze);
+      System.out.println(dijkstraResult);
+      
       sc.close();
     }
 }

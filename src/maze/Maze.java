@@ -1,7 +1,7 @@
 package maze;
 import java.awt.Point;
 import java.util.ArrayList;
-
+import java.util.List;
 public class Maze {
     private Cell[][] grid;
     private Point start;
@@ -87,25 +87,39 @@ public class Maze {
     }
 
     // show maze
-    public void showMaze(){
-        for(Cell[] cells: grid){
-            for(Cell cell: cells){
+    public void showMaze(List<Point> pathList){
+        for(int r = 0;r < height();r++){
+            for(int c = 0;c < width();c++){
                 String cur = "";
-                if(cell.type == CellType.GOAL)
-                    cur = "G";
-                if(cell.type == CellType.START)
-                    cur = "S";
-                if(cell.type == CellType.WALL)
-                    cur = "#";
-                if(cell.type == CellType.NUMBER)
-                    cur = String.valueOf(cell.value);
+                boolean isPath = false;
+                for(Point p : pathList){
+                    if(p.x == r && p.y == c){
+                        isPath = true;
+                        break;
+                    }
+                }
+                Cell cell = grid[r][c];
 
-                System.out.printf("%s ", cur);
+                if(cell.type == CellType.START){
+                    cur = "S";
+                }
+                else if(cell.type == CellType.GOAL){
+                    cur = "G";
+                }
+                else if(isPath){
+                    cur = "*";
+                }
+                else if(cell.type == CellType.WALL){
+                    cur = "#";
+                }
+                else{
+                    cur = String.valueOf(cell.value);
+                }
+                System.out.printf("%-4s",cur);
             }
             System.out.println();
         }
-    }
-
+}
     // helpers
     public int availableDirection(int y, int x){
         // we will mark the available direction as a bit map 4 bits
