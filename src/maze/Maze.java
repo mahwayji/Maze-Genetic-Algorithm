@@ -1,3 +1,4 @@
+package maze;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -69,11 +70,11 @@ public class Maze {
         return grid[r][c]; 
     }
 
-    public int rows() { 
+    public int height() { 
         return grid.length; 
     }
 
-    public int cols() { 
+    public int width() { 
         return grid[0].length; 
     }
 
@@ -103,5 +104,30 @@ public class Maze {
             }
             System.out.println();
         }
+    }
+
+    // helpers
+    public int availableDirection(int y, int x){
+        // we will mark the available direction as a bit map 4 bits
+        // 0000 with mark as up down left right accordingly
+        int available = 0;
+
+        // up
+        if(get(y-1, x).type != CellType.WALL)
+            available += 8;
+
+        // down
+        if(get(y+1, x).type != CellType.WALL)
+            available += 4;
+
+        // left
+        if(get(y, x-1).type != CellType.WALL)
+            available += 2;
+
+        // right
+        if(get(y, x+1).type != CellType.WALL)
+            available += 1;
+
+        return available;
     }
 }

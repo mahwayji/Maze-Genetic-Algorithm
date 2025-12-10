@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import maze.Maze;
 public class Main {
     public static void main(String[] args){
       Scanner sc =new Scanner(System.in);
@@ -17,7 +18,9 @@ public class Main {
       } while(lines.get(index).compareTo(lines.get(0)) != 0);
 
       Maze maze = new Maze(lines);
+
       maze.showMaze();
+
       sc.close();
     }
 }

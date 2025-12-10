@@ -1,3 +1,4 @@
+package maze;
 public class Cell {
     CellType type;
     int value;
