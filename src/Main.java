@@ -23,14 +23,19 @@ public class Main {
       maze.showMaze(new ArrayList<>());
 
       System.out.printf("\nDijkstra Map : ");
-      pathfinderContext pathfinder_DijkStra = new pathfinderContext(new Dijkstra());
-      int dijkstraResult = pathfinder_DijkStra.execute(maze);
+      pathfinderContext solver = new pathfinderContext(new Dijkstra());
+      int dijkstraResult = solver.execute(maze);
       System.out.printf("->dijkstraResult: %d",dijkstraResult);
 
       System.out.printf("\nA-Star Map : ");
-      pathfinderContext pathfinder_A_Star = new pathfinderContext(new A_Star());
-      int AStarResult = pathfinder_A_Star.execute(maze);
+      solver.setStretegy(new A_Star());
+      int AStarResult = solver.execute(maze);
       System.out.printf("->AStarResult: %d",AStarResult);
+
+      System.out.printf("\nGenetic Algorithm Map: ");
+      solver.setStretegy(new GeneticAlgorithm());
+      int GAResult = solver.execute(maze);
+      System.out.printf("->Genetic Algorithm Result: %d", GAResult);
 
       sc.close();
     }

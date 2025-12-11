@@ -107,7 +107,7 @@ public class Maze {
                     cur = "G";
                 }
                 else if(isPath){
-                    cur = "*";
+                    cur = "-1";
                 }
                 else if(cell.type == CellType.WALL){
                     cur = "#";

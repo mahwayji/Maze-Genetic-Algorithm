@@ -1,6 +1,7 @@
 package maze;
 
 public class Cell {
+    public static final CellType CellType = null;
     public CellType type;
     public int value;
 
