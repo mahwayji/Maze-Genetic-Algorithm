@@ -203,7 +203,7 @@ public class GeneticAlgorithm implements pathfinderStrategy{
             fitness += 10000;
             fitness += (chromosome.length - stepsTaken) * 50; // Bonus for speed
         }
-        fitness -= totalCost * 5;
+        fitness -= totalCost * 10;
 
         
         return new Moves(chromosome, fitness, totalCost, goalReached);

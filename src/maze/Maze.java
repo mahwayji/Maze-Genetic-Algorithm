@@ -107,6 +107,8 @@ public class Maze {
                     cur = "G";
                 }
                 else if(isPath){
+                    if(cell.type == CellType.WALL)
+                        //System.out.println("wall hitted");
                     cur = "-1";
                 }
                 else if(cell.type == CellType.WALL){
