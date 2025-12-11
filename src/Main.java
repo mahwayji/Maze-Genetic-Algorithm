@@ -19,10 +19,19 @@ public class Main {
 
       Maze maze = new Maze(lines);
 
-      pathfinderContext pathfinder = new pathfinderContext(new Dijkstra());
-      int dijkstraResult = pathfinder.execute(maze);
-      System.out.println(dijkstraResult);
-      
+      System.out.printf("\nDefault Map : \n");
+      maze.showMaze(new ArrayList<>());
+
+      System.out.printf("\nDijkstra Map : ");
+      pathfinderContext pathfinder_DijkStra = new pathfinderContext(new Dijkstra());
+      int dijkstraResult = pathfinder_DijkStra.execute(maze);
+      System.out.printf("->dijkstraResult: %d",dijkstraResult);
+
+      System.out.printf("\nA-Star Map : ");
+      pathfinderContext pathfinder_A_Star = new pathfinderContext(new A_Star());
+      int AStarResult = pathfinder_A_Star.execute(maze);
+      System.out.printf("->AStarResult: %d",AStarResult);
+
       sc.close();
     }
 }

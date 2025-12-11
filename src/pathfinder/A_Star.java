@@ -4,8 +4,10 @@ import maze.Maze;
 import maze.CellType;
 import java.awt.Point;
 import java.util.*;
-
-public class Dijkstra implements pathfinderStrategy {
+public class A_Star implements pathfinderStrategy{
+    private int heuristic(int r,int c,Point goal){
+        return Math.abs(r - goal.x) + Math.abs(c - goal.y);
+    }
     @Override
     public int bestExit(Maze maze) {
         System.out.println();
@@ -19,8 +21,10 @@ public class Dijkstra implements pathfinderStrategy {
         }
         PriorityQueue<Node> pq = new PriorityQueue<>();
         Point start = maze.getStart();
+        Point goal = maze.getGoal();
         path[start.x][start.y] = 0;
-        pq.add(new Node(start.x, start.y,0, 0, null));
+        int hStart = heuristic(start.x, start.y, goal);
+        pq.add(new Node(start.x, start.y,0, hStart, null));
         // {up,down,left,right}
         int[] dRow = { -1, 1, 0, 0 };
         int[] dCol = { 0, 0, -1, 1 };
@@ -61,11 +65,13 @@ public class Dijkstra implements pathfinderStrategy {
                     if (newR < 0 || newR >= rows || newC < 0 || newC >= cols) {
                         continue;
                     }
-                    int pTimes = current.pTimes + maze.get(newR, newC).value;
+                    int newpTimes = current.pTimes + maze.get(newR, newC).value;
 
-                    if (pTimes < path[newR][newC]) {
-                        path[newR][newC] = pTimes;
-                        pq.add(new Node(newR, newC, pTimes,pTimes,current));
+                    if (newpTimes < path[newR][newC]) {
+                        path[newR][newC] = newpTimes;
+                        int h = heuristic(newR, newC, goal);
+                        int f = newpTimes + h;
+                        pq.add(new Node(newR, newC, newpTimes,f,current));
                     }
                 }
             }
