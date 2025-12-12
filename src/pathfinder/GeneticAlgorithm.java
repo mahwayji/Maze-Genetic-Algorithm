@@ -14,11 +14,11 @@ import maze.CellType;
 import maze.Maze;
 public class GeneticAlgorithm implements pathfinderStrategy{
     public int bestExit(Maze maze){
-        //  constant
-        int CHROM_LENGTH = (int) ((maze.width() + maze.height()) * 1.5 );
-        int MAX_POPULATION = 20000;
+        // constant
+        int CHROM_LENGTH = (int) ((maze.width() + maze.height()) * 2 );
+        int MAX_POPULATION = 40000;
         double CROSSOVER_RATE = 0.95;
-        double MUTATION_RATE = 0.08;
+        double MUTATION_RATE = 0.05;
         
         
         List<int[]> population = generatePopulation(MAX_POPULATION, CHROM_LENGTH);
@@ -99,7 +99,7 @@ public class GeneticAlgorithm implements pathfinderStrategy{
             System.out.println("Generation "+ generation + " Best Fitness: " + bestMoves.fitness);
             generation++;
 
-            List<Moves> selectedMoves = selection(fitness_scores, MAX_POPULATION/2);
+            List<Moves> selectedMoves = selection(fitness_scores, (int)(MAX_POPULATION/2));
             List<int[]> moves = new ArrayList<>();
             for(Moves m: selectedMoves){
                 moves.add(m.moves);
@@ -185,23 +185,25 @@ public class GeneticAlgorithm implements pathfinderStrategy{
                     reverseCount = 0;
                 }
             prev = move;
-
+            pos = new Point(newR, newC);
             
             // out of bounds
             if(newR < 0 || newR >= rows || newC < 0 || newC >= cols ){
                 // Penalty based on how much of the chromosome was left unused
-                fitness -= (chromosome.length - stepsTaken) * 100;
+                //fitness -= (chromosome.length - stepsTaken) * 100;
+                fitness -= (dist) * 1000;
+
                 outOfBound = true;
                 break;
                 }
 
             // get next cell
             Cell next = maze.get(newR, newC);
-            pos = new Point(newR, newC);
 
             // hit wall
             if(next.type == CellType.WALL){
-                fitness -= (chromosome.length - stepsTaken) * 100;
+                //fitness -= (chromosome.length - stepsTaken) * 100;
+                fitness -= (dist) * 1000;
                 hitWall = true;
                 break;
             }
@@ -224,7 +226,7 @@ public class GeneticAlgorithm implements pathfinderStrategy{
 
             // penalty for cycles
             if (last10.contains(pos)) {
-                fitness -= 8000;  
+                fitness -= 4000;  
             }
             last10.add(pos);
             if (last10.size() > 10) last10.removeFirst();
@@ -253,7 +255,7 @@ public class GeneticAlgorithm implements pathfinderStrategy{
         dist = Math.abs(pos.x - goal.x) +
             Math.abs(pos.y - goal.y);
 
-        fitness += (maxDist - dist) * 200; // Reward getting closer
+        fitness += (maxDist - dist) * 300; // Reward getting closer
         if (dist <= 4) fitness += 1000*((4-dist));
 
         if(hitWall || outOfBound) {
@@ -300,11 +302,17 @@ public class GeneticAlgorithm implements pathfinderStrategy{
         }
 
         int a = rnd.nextInt(n);
+        int b = rnd.nextInt(n);
+
+        // Ensure a < b
+        if (a > b) {
+            int temp = a; a = b; b = temp;
+        }
 
         int[] c1 = p1.clone();
         int[] c2 = p2.clone();
 
-        for(int i = a; i < n; i++){
+        for(int i = a; i < b; i++){
             c1[i] = p2[i];
             c2[i] = p1[i];
         }
