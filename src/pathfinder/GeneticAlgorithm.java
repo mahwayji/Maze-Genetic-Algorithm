@@ -100,11 +100,8 @@ public class GeneticAlgorithm implements pathfinderStrategy{
             generation++;
 
             List<Moves> selectedMoves = selection(fitness_scores, (int)(MAX_POPULATION/2));
-            List<int[]> moves = new ArrayList<>();
-            for(Moves m: selectedMoves){
-                moves.add(m.moves);
-            }
-            List<int[]> newGen = generateNextPopulation(bestMoves, moves, MAX_POPULATION, CROSSOVER_RATE, MUTATION_RATE);
+            
+            List<int[]> newGen = generateNextPopulation(fitness_scores, selectedMoves, MAX_POPULATION, CROSSOVER_RATE, MUTATION_RATE);
             population.clear();
             population.addAll(newGen);
         } while (stagnantCount < 100);
@@ -247,7 +244,7 @@ public class GeneticAlgorithm implements pathfinderStrategy{
         if (goalReached) {
             fitness += 100000;
             fitness += (chromosome.length - stepsTaken) * 20; // Bonus for speed
-            fitness -= totalCost * 15;
+            fitness -= totalCost * 100;
         } else {
             fitness -= totalCost * 5;
         }
@@ -341,19 +338,22 @@ public class GeneticAlgorithm implements pathfinderStrategy{
     }
 
     // Generate next generation
-    private List<int[]> generateNextPopulation(Moves bestMoves, List<int[]> parents, int popSize, double crossoverRate, double mutationRate){
+    private List<int[]> generateNextPopulation(List<Moves> best, List<Moves> parent, int popSize, double crossoverRate, double mutationRate){
         List<int[]> newPopulation = new ArrayList<>();
         Random rnd = new Random();
 
-        newPopulation.add(bestMoves.moves.clone());
+        for(int i = 0 ; i < (popSize*0.1); i++){
+            newPopulation.add(best.get(i).moves.clone());
+
+        }
 
         while(newPopulation.size() < popSize){
             // random parent
-            int idx1 = rnd.nextInt(parents.size());
-            int idx2 = rnd.nextInt(parents.size());
+            int idx1 = rnd.nextInt(parent.size());
+            int idx2 = rnd.nextInt(parent.size());
 
-            int[] p1 = parents.get(idx1);
-            int[] p2 = parents.get(idx2);
+            int[] p1 = parent.get(idx1).moves;
+            int[] p2 = parent.get(idx2).moves;
 
             int[][] children = crossover(p1, p2, crossoverRate);
             
