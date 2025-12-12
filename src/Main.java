@@ -35,7 +35,7 @@ public class Main {
       System.out.printf("\nGenetic Algorithm Map: ");
       solver.setStretegy(new GeneticAlgorithm());
       int GAResult = solver.execute(maze);
-      System.out.printf("->Genetic Algorithm Result: %d", GAResult);
+      System.out.printf("->Genetic Algorithm Result: %d\n", GAResult);
 
       sc.close();
     }

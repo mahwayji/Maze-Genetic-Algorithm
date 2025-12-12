@@ -78,7 +78,6 @@ public class GeneticAlgorithm implements pathfinderStrategy{
         int generation = 0;
         ArrayList<Moves> fitness_scores; 
         do{
-            
 
             fitness_scores = new ArrayList<>();
             for(int[] chromosome: population){
@@ -252,6 +251,7 @@ public class GeneticAlgorithm implements pathfinderStrategy{
         dist = Math.abs(pos.x - goal.x) +
             Math.abs(pos.y - goal.y);
 
+        fitness += stepsTaken * 50;
         fitness += (maxDist - dist) * 300; // Reward getting closer
         if (dist <= 4) fitness += 1000*((4-dist));
 
