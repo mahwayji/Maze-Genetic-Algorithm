@@ -19,7 +19,7 @@ public class GeneticAlgorithm implements pathfinderStrategy {
     public int bestExit(Maze maze) {
         // constant
         int CHROM_LENGTH = (int) ((maze.width() + maze.height()) * 2 );
-        int MAX_POPULATION = 50000;
+        int MAX_POPULATION = 10000;
         double CROSSOVER_RATE = 0.95;
         double MUTATION_RATE = 0.08;
         
@@ -65,6 +65,11 @@ public class GeneticAlgorithm implements pathfinderStrategy {
         if (best.goalReached)
             System.out.println("Goal Reached");
 
+        for(int move: best.moves){
+            System.out.printf("%d", move);
+        }
+
+        System.out.println();
         for(int move : best.moves){
             Point nextPos = getNextPosition(pos, move);
             visited.add(pos);
@@ -95,17 +100,18 @@ public class GeneticAlgorithm implements pathfinderStrategy {
             double MUTATION_RATE) {
         Moves bestMoves = new Moves(null, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
         int stagnantCount = 0;
-
+        int annihilationCount = 0;
+        
         int generation = 0;
         double currentMutationRate = MUTATION_RATE;
         ArrayList<Moves> fitness_scores; 
 
         do{
             //hyper-mutation
-            if(stagnantCount > 25)
-                currentMutationRate = 0.25;
-            else 
-                currentMutationRate = MUTATION_RATE;
+            // if(stagnantCount > 25)
+            //     currentMutationRate = 0.10;
+            // else 
+            //     currentMutationRate = MUTATION_RATE;
             fitness_scores = new ArrayList<>();
             for (int[] chromosome : population) {
                 fitness_scores.add(fitnessCalculate(maze, chromosome));
@@ -114,28 +120,37 @@ public class GeneticAlgorithm implements pathfinderStrategy {
 
             Collections.sort(fitness_scores);
             // stop when no improvement found
-            if (bestMoves.fitness + 1e-9 > fitness_scores.get(0).fitness)
+            if (bestMoves.fitness + 1e-9 > fitness_scores.get(0).fitness){
+                annihilationCount++;
                 stagnantCount++;
+            }
 
             else if (bestMoves.fitness < fitness_scores.get(0).fitness) {
                 bestMoves = fitness_scores.get(0);
                 stagnantCount = 0;
+                annihilationCount = 0;
             }
 
             System.out.println("Generation " + generation + " Best Fitness: " + bestMoves.fitness);
             generation++;
 
             List<Moves> selectedMoves = selection(fitness_scores, (int)(MAX_POPULATION/2));
-
-            List<int[]> newGen = generateNextPopulation(maze, fitness_scores, selectedMoves, MAX_POPULATION, CROSSOVER_RATE, currentMutationRate);
+            List<int[]> newGen;
+            if(annihilationCount < 25 || bestMoves.goalReached) 
+                newGen = generateNextPopulation(maze, fitness_scores, selectedMoves, MAX_POPULATION, CROSSOVER_RATE, currentMutationRate);
+            else {
+                annihilationCount = 0;
+                newGen = localOptimaEscapeed(maze, fitness_scores, MAX_POPULATION);
+            }
             population.clear();
             population.addAll(newGen);
     
             
-        } while (stagnantCount < 100);
+        } while (stagnantCount < 200);
 
         return bestMoves;
     }
+
     private int biasedStep(int prev) { 
         Random r = new Random(); 
         if (prev == -1) return r.nextInt(4); // first move 
@@ -150,9 +165,9 @@ public class GeneticAlgorithm implements pathfinderStrategy {
         }
 
         int choice = r.nextInt(10); // 0–9 
-        if (choice < 4) return forward[0]; 
-        if (choice < 8) return forward[1]; 
-        return forward[2];
+        if (choice < 6) return forward[0]; //50%
+        if (choice < 9) return forward[1]; //30%
+        return forward[2];                 //20%
     }
     // Generate population
     private int[] generateChromosomes(int length) {
@@ -251,6 +266,7 @@ public class GeneticAlgorithm implements pathfinderStrategy {
     // Fitness function
     private Moves fitnessCalculate(Maze maze, int[] chromosome) {
         Point start = maze.getStart();
+        Point goal = maze.getGoal();
         Point pos = start;
         int totalCost = 0;
         int stepsTaken = 0;
@@ -355,19 +371,17 @@ public class GeneticAlgorithm implements pathfinderStrategy {
         }
 
         // exploration reward
-        fitness += Math.min(stepsTaken, uniqueVisited.size()) * 100; 
-        
+        //fitness += Math.min(stepsTaken, uniqueVisited.size()) * 150; 
+        //fitness += stepsTaken * 500;
         // penalize costly paths
         //fitness -= stepsTaken * 500;
-
-        Point goal = maze.getGoal();
 
         dist = Math.pow(pos.x - goal.x, 2) +
                     Math.pow(pos.y - goal.y, 2);
         
         dist = Math.sqrt(dist);
         fitness += (maxDist - dist) * 500;// Reward getting farther from the starting point
-        // if (dist <= 4) fitness += 1000*((4-dist));
+        // if (dist <= 5) fitness += 1000*((5-dist));
 
         if (hitWall || outOfBound) {
             //fitness -= 10000;
@@ -397,7 +411,7 @@ public class GeneticAlgorithm implements pathfinderStrategy {
 
     // Selection Ver 2
     private List<Moves> selection(ArrayList<Moves> fitness_scores, int count) {
-        int competitionSize = 3;
+        int competitionSize = 2;
         List<Moves> selected = new ArrayList<>();
         Random rnd = new Random();
         for (int i = 0; i < count; i++) {
@@ -472,7 +486,9 @@ public class GeneticAlgorithm implements pathfinderStrategy {
                 List<Integer> validMoves = getValidMoves(maze, r, c, prev);
                 
                 if(!validMoves.isEmpty()) {
-                    newMove = validMoves.get(rnd.nextInt(validMoves.size()));
+                    do{
+                        newMove = validMoves.get(rnd.nextInt(validMoves.size()));
+                    } while(newMove == prev && validMoves.size() > 1);
             
                     chromosome[i] = newMove;
                     prev = newMove;
@@ -524,4 +540,23 @@ public class GeneticAlgorithm implements pathfinderStrategy {
         return newPopulation;
     }
 
+    private List<int[]> localOptimaEscapeed(Maze maze, List<Moves> best, int popSize){
+        List<int[]> population = new ArrayList<>();
+        // select first 10% best from current generation
+        for(int i = 0; i < popSize*0.05; i++){
+            population.add(best.get(i).moves);
+        }
+
+        int length = best.get(0).moves.length;
+        // Generate new guided genes for 50%
+        for(int j = 0; j < popSize * 0.55 ; j++){
+            population.add(guidedChromosomes(maze, length));
+        }
+
+        // Generate a random genes for  the 40% left
+        while(population.size() < popSize){
+            population.add(generateChromosomes(length));
+        }
+        return population;
+    }
 }
