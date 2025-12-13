@@ -129,19 +129,19 @@ public class Maze {
         int available = 0;
 
         // up
-        if(get(y-1, x).type != CellType.WALL)
+        if(y > 0 && get(y-1, x).type != CellType.WALL)
             available += 8;
 
         // down
-        if(get(y+1, x).type != CellType.WALL)
+        if(y < this.height()-1 && get(y+1, x).type != CellType.WALL)
             available += 4;
 
         // left
-        if(get(y, x-1).type != CellType.WALL)
+        if(x > 0 && get(y, x-1).type != CellType.WALL)
             available += 2;
 
         // right
-        if(get(y, x+1).type != CellType.WALL)
+        if(x < this.width()-1 && get(y, x+1).type != CellType.WALL)
             available += 1;
 
         return available;
