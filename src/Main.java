@@ -2,41 +2,47 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import pathfinder.*;
 import maze.Maze;
+
 public class Main {
-    public static void main(String[] args){
-      Scanner sc =new Scanner(System.in);
-      ArrayList<String> lines = new ArrayList<>();
-      int index = 0;
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    ArrayList<String> lines = new ArrayList<>();
+    int index = 0;
 
-      // get first line 
+    // get first line
+    lines.add(sc.nextLine());
+
+    // input map
+    do {
       lines.add(sc.nextLine());
+      index++;
+    } while (lines.get(index).compareTo(lines.get(0)) != 0);
 
-      //input map
-      do {
-        lines.add(sc.nextLine());
-        index++;
-      } while(lines.get(index).compareTo(lines.get(0)) != 0);
+    Maze maze = new Maze(lines);
 
-      Maze maze = new Maze(lines);
+    System.out.printf("\nDefault Map : \n");
+    maze.showMaze(new ArrayList<>());
 
-      System.out.printf("\nDefault Map : \n");
-      maze.showMaze(new ArrayList<>());
+    System.out.printf("\nDijkstra Map : ");
+    pathfinderContext solver = new pathfinderContext(new Dijkstra());
+    int dijkstraResult = solver.execute(maze);
+    System.out.printf("->dijkstraResult: %d", dijkstraResult);
 
-      System.out.printf("\nDijkstra Map : ");
-      pathfinderContext solver = new pathfinderContext(new Dijkstra());
-      int dijkstraResult = solver.execute(maze);
-      System.out.printf("->dijkstraResult: %d",dijkstraResult);
+    System.out.printf("\nA-Star Map : ");
+    solver.setStretegy(new A_Star());
+    int AStarResult = solver.execute(maze);
+    System.out.printf("->AStarResult: %d", AStarResult);
 
-      System.out.printf("\nA-Star Map : ");
-      solver.setStretegy(new A_Star());
-      int AStarResult = solver.execute(maze);
-      System.out.printf("->AStarResult: %d",AStarResult);
+    System.out.printf("\nGreedy Algorithm Map : ");
+    solver.setStretegy(new GreedyBestFirst());
+    int GreedyResult = solver.execute(maze);
+    System.out.printf("->GreedyResult: %d", GreedyResult);
 
-      System.out.printf("\nGenetic Algorithm Map: ");
-      solver.setStretegy(new GeneticAlgorithm());
-      int GAResult = solver.execute(maze);
-      System.out.printf("->Genetic Algorithm Result: %d\n", GAResult);
+    System.out.printf("\nGenetic Algorithm Map: ");
+    solver.setStretegy(new GeneticAlgorithm());
+    int GAResult = solver.execute(maze);
+    System.out.printf("->Genetic Algorithm Result: %d\n", GAResult);
 
-      sc.close();
-    }
+    sc.close();
+  }
 }
