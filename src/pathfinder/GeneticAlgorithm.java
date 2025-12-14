@@ -13,7 +13,7 @@ import maze.Cell;
 import maze.CellType;
 import maze.Maze;
 
-public class GeneticAlgorithm implements pathfinderStrategy {
+public class GeneticAlgorithm implements PathfinderStrategy {
     private final HashMap<Point, double[]> deadEndMemory = new HashMap<>();
     private static final double PATH_HARD_BLOCK = 40.0;
 

@@ -4,7 +4,7 @@ import java.util.*;
 import maze.*;
 import java.awt.Point;
 
-public class GreedyBestFirst implements pathfinderStrategy {
+public class GreedyBestFirst implements PathfinderStrategy {
     @Override
     public int bestExit(Maze maze) {
         Point start = maze.getStart();

@@ -2,14 +2,14 @@ package pathfinder;
 
 import maze.Maze;
 
-public class pathfinderContext {
-    private pathfinderStrategy strategy;
+public class PathfinderContext {
+    private PathfinderStrategy strategy;
 
-    public pathfinderContext(pathfinderStrategy strategy){
+    public PathfinderContext(PathfinderStrategy strategy){
         this.strategy = strategy;
     }
 
-    public void setStretegy(pathfinderStrategy strategy){
+    public void setStretegy(PathfinderStrategy strategy){
         this.strategy = strategy;
     }
 

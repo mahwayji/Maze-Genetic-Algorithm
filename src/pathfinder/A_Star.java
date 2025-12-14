@@ -4,7 +4,7 @@ import maze.Maze;
 import maze.CellType;
 import java.awt.Point;
 import java.util.*;
-public class A_Star implements pathfinderStrategy{
+public class A_Star implements PathfinderStrategy{
     private int heuristic(int r,int c,Point goal){
         return Math.abs(r - goal.x) + Math.abs(c - goal.y);
     }

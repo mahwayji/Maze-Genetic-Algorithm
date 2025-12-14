@@ -5,7 +5,7 @@ import maze.CellType;
 import java.awt.Point;
 import java.util.*;
 
-public class Dijkstra implements pathfinderStrategy {
+public class Dijkstra implements PathfinderStrategy {
     @Override
     public int bestExit(Maze maze) {
         System.out.println();

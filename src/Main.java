@@ -23,7 +23,7 @@ public class Main {
     System.out.printf("\nDefault Map : \n");
     maze.showMaze(new ArrayList<>());
 
-  pathfinderContext solver = new pathfinderContext(null);
+  PathfinderContext solver = new PathfinderContext(null);
 
     System.out.printf("\nGenetic Algorithm Map: ");
     solver.setStretegy(new GeneticAlgorithm());
