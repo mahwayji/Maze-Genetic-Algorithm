@@ -22,21 +22,22 @@ public class Main {
       System.out.printf("\nDefault Map : \n");
       maze.showMaze(new ArrayList<>());
 
-      System.out.printf("\nDijkstra Map : ");
-      pathfinderContext solver = new pathfinderContext(new Dijkstra());
-      int dijkstraResult = solver.execute(maze);
-      System.out.printf("->dijkstraResult: %d",dijkstraResult);
-
-      System.out.printf("\nA-Star Map : ");
-      solver.setStretegy(new A_Star());
-      int AStarResult = solver.execute(maze);
-      System.out.printf("->AStarResult: %d",AStarResult);
+      pathfinderContext solver = new pathfinderContext(null);
 
       System.out.printf("\nGenetic Algorithm Map: ");
       solver.setStretegy(new GeneticAlgorithm());
       int GAResult = solver.execute(maze);
       System.out.printf("->Genetic Algorithm Result: %d\n", GAResult);
 
+      System.out.printf("\nDijkstra Map : ");
+      solver.setStretegy(new Dijkstra());
+      int dijkstraResult = solver.execute(maze);
+      System.out.printf("->dijkstraResult: %d\n",dijkstraResult);
+
+      System.out.printf("\nA-Star Map : ");
+      solver.setStretegy(new A_Star());
+      int AStarResult = solver.execute(maze);
+      System.out.printf("->AStarResult: %d\n",AStarResult);
       sc.close();
     }
 }
