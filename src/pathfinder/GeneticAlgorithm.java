@@ -18,7 +18,7 @@ public class GeneticAlgorithm implements PathfinderStrategy {
     private static final double PATH_HARD_BLOCK = 40.0;
 
     private final int MAX_POPULATION = 5000;
-    private final double CROSSOVER_RATE = 0.95;
+    private final double CROSSOVER_RATE = 0.90;
     private final double MUTATION_RATE = 0.1;
     private final double GUIDED_RATIO = 0.25;
     private Random rnd = new Random();
