@@ -341,6 +341,13 @@ public class GeneticAlgorithmVisualizer implements AnimatablePathfinder {
                 break;
             }
 
+            // cell type reward
+            if (next.type == CellType.NUMBER)
+                totalCost += next.value;
+
+            if (next.type == CellType.GOAL)
+                break;
+
             // exploration reward
             if (uniqueVisited.get(pos) == null) {
                 fitness += 250;
@@ -375,13 +382,6 @@ public class GeneticAlgorithmVisualizer implements AnimatablePathfinder {
             if (recent.size() > 10)
                 recent.remove(0);
 
-            // cell type reward
-            if (next.type == CellType.NUMBER)
-                totalCost += next.value;
-
-            if (next.type == CellType.GOAL)
-                break;
-
             double penalty = getPenalty(prev, move);
             if (penalty > 0.0) {
                 // Heavily penalize moving into known bad areas
@@ -393,6 +393,12 @@ public class GeneticAlgorithmVisualizer implements AnimatablePathfinder {
         }
 
         // Global path quality
+        dist = Math.pow(pos.x - goal.x, 2) + Math.pow(pos.y - goal.y, 2);
+        dist = Math.sqrt(dist);
+        // Reward getting closer to goal
+        fitness += (maxDist - dist) * 500;
+
+
         boolean goalReached = maze.getGoal().equals(pos);
         if (goalReached) {
             fitness += 1_000_000;
@@ -401,17 +407,12 @@ public class GeneticAlgorithmVisualizer implements AnimatablePathfinder {
         } else {
             fitness -= totalCost * 25;
         }
-
         // eliminate loop move
         if (!goalReached && uniqueVisited.size() < stepsTaken * 0.4) {
             fitness = -500_000;
         }
 
-        dist = Math.pow(pos.x - goal.x, 2) + Math.pow(pos.y - goal.y, 2);
-        dist = Math.sqrt(dist);
-        // Reward getting closer to goal
-        fitness += (maxDist - dist) * 500;
-
+      
         return new Moves(chromosome, fitness, totalCost, goalReached);
     }
 
