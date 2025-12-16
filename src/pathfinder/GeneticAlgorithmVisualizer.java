@@ -385,7 +385,7 @@ public class GeneticAlgorithmVisualizer implements AnimatablePathfinder {
             double penalty = getPenalty(prev, move);
             if (penalty > 0.0) {
                 // Heavily penalize moving into known bad areas
-                fitness -= penalty * 50;
+                fitness -= penalty * 100;
             }
 
             prev = pos;
@@ -411,8 +411,10 @@ public class GeneticAlgorithmVisualizer implements AnimatablePathfinder {
         if (!goalReached && uniqueVisited.size() < stepsTaken * 0.4) {
             fitness = -500_000;
         }
-
-      
+        // elimiate wasted genes
+        if(!goalReached && stepsTaken == chromosome.length)
+            fitness = -1_000_000;
+    
         return new Moves(chromosome, fitness, totalCost, goalReached);
     }
 
